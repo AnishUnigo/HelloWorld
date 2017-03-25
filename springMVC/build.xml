@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<project name="springMVC" default="myWebApp" basedir="." > 
+	<property name="java.program.dir" value = "./src" />	
+	<property name="java.classes.dir" value = "./classes" />
+	<property name="web.pages.dir" value = "./webpages" />
+	<property name="config.dir" value = "./config" />
+	<property name="lib.dir" value = "./lib" />
+	
+	<target name="cleanup">
+		<delete dir="${java.classes.dir}"></delete>
+		<mkdir dir="${java.classes.dir}"/>
+	</target>
+
+	<target name="myOwnCompiler" depends="cleanup">
+		<path id="project.class.path">
+			<fileset dir="${lib.dir}">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		<javac includeantruntime="false"  classpathref="project.class.path"  destdir="${java.classes.dir}" debug="true">
+			<src path="${java.program.dir}" />
+		</javac>
+	</target>
+	
+	<target name="myWebApp" depends="myOwnCompiler">
+			<war destfile="./springMVC.war" webxml="${config.dir}/web.xml" >
+				
+				<webinf dir="${config.dir}" 
+				file="./config/spring-dispatcher-servlet.xml">
+				</webinf>
+				<fileset dir="${web.pages.dir}"/>
+				
+				<classes dir="${java.classes.dir}"/>
+				<classes file="./log4j.properties"/>
+				
+			     <lib dir="${lib.dir}"/>
+				
+				<!-- Hibernate config change -->
+				<classes dir="${config.dir}" includes="hibernate.cfg.xml"/>
+				
+				<!-- log4j.xml configuration-->
+				<classes dir="${config.dir}" includes="log4j.xml"/>
+			
+			    <!-- spring config change  -->
+				<classes dir="${config.dir}" includes="spring.xml"/>
+				<classes dir="${config.dir}" includes="spring-dispatcher-servlet.xml"/>
+			
+			</war>	
+		<copy todir="E:\j2eesoftware\apache-tomcat-8.5.8\webapps"
+					file="springMVC.war" overwrite="true">
+							
+			</copy>
+		</target>
+</project>		
